@@ -1,3 +1,4 @@
+const Joi = require('joi'); // returns a class
 const express = require('express');
 const app = express();
 
@@ -20,6 +21,28 @@ app.get('/api/courses', (req, res) => {
 });
 
 app.post('/api/courses', (req, res) => {
+    const schema = Joi.object({
+        name: Joi.string().min(3).required()
+    });
+
+    const result = schema.validate(req.body);
+
+    if (result.error) {
+        res.status(400).send(result.error.details[0].message);  // result.error alone returns entire result object
+        return;
+    }
+
+    // to generate 400 responses manually
+    // if (!req.body.name) {
+    //     // 400 bad request
+    //     res.status(400).send('Name is required.');
+    //     return;
+    // }
+    // if (req.body.name.length < 3) {
+    //     res.status(400).send('Name must be at least 3 characters.');
+    //     return;
+    // }
+    
     const course = {
         id: courses.length + 1, // would come from db if connected
         name: req.body.name
