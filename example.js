@@ -33,10 +33,12 @@ app.post('/api/courses', (req, res) => {
     // }
 
     const { error } = validateCourse(req.body); // equivalent to result.error
-    if (error) {
-        res.status(400).send(error.details[0].message);
-        return;
-    }
+    if (error) return res.status(400).send(error.details[0].message);   // equivalent to below
+
+    // if (error) {
+    //     res.status(400).send(error.details[0].message);
+    //     return;
+    // }
 
     // to generate 400 responses manually
     // if (!req.body.name) {
@@ -61,7 +63,7 @@ app.put('/api/courses/:id', (req, res) => {
     // look up course
     // if doesn't exist, return 404
     const course = courses.find(c => c.id === parseInt(req.params.id));
-    if (!course) res.status(404).send('The course with the given ID was not found.');
+    if (!course) return res.status(404).send('The course with the given ID was not found.');
 
     // validate
     // if invalid, return 400 - bad request
@@ -75,14 +77,25 @@ app.put('/api/courses/:id', (req, res) => {
     // const result = validateCourse(req.body);
 
     const { error } = validateCourse(req.body); // equivalent to result.error
-    if (error) {
-        res.status(400).send(error.details[0].message);
-        return;
-    }
+    if (error) return res.status(400).send(error.details[0].message);
 
     // update course
     // return the updated course
     course.name = req.body.name;
+    res.send(course);
+});
+
+app.delete('/api/courses/:id', (req, res) => {
+    // look up course
+    // if it doesn't exist, return 404
+    const course = courses.find(c => c.id === parseInt(req.params.id));
+    if (!course) return res.status(404).send('The course with the given ID was not found.');
+
+    // delete
+    const index = courses.indexOf(course);
+    courses.splice(index, 1);
+
+    // return the same course
     res.send(course);
 });
 
@@ -98,7 +111,7 @@ function validateCourse(course) {
 app.get('/api/courses/:id', (req, res) => { // id is parameter
     // res.send(req.params.id);
     const course = courses.find(c => c.id === parseInt(req.params.id)); //req.params.id returns string, need to parse to bool
-    if (!course) res.status(404).send('The course with the given ID was not found.') // 404 - object not found
+    if (!course) return res.status(404).send('The course with the given ID was not found.') // 404 - object not found
     res.send(course);
 });
 
