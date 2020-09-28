@@ -21,14 +21,20 @@ app.get('/api/courses', (req, res) => {
 });
 
 app.post('/api/courses', (req, res) => {
-    const schema = Joi.object({
-        name: Joi.string().min(3).required()
-    });
+    // const schema = Joi.object({
+    //     name: Joi.string().min(3).required()
+    // });
 
-    const result = schema.validate(req.body);
+    // const result = schema.validate(req.body);
 
-    if (result.error) {
-        res.status(400).send(result.error.details[0].message);  // result.error alone returns entire result object
+    // if (result.error) {
+    //     res.status(400).send(result.error.details[0].message);  // result.error alone returns entire result object
+    //     return;
+    // }
+
+    const { error } = validateCourse(req.body); // equivalent to result.error
+    if (error) {
+        res.status(400).send(error.details[0].message);
         return;
     }
 
@@ -50,6 +56,43 @@ app.post('/api/courses', (req, res) => {
     courses.push(course);
     res.send(course);   // return object in body of response
 });
+
+app.put('/api/courses/:id', (req, res) => {
+    // look up course
+    // if doesn't exist, return 404
+    const course = courses.find(c => c.id === parseInt(req.params.id));
+    if (!course) res.status(404).send('The course with the given ID was not found.');
+
+    // validate
+    // if invalid, return 400 - bad request
+
+    // const schema = Joi.object({
+    //     name: Joi.string().min(3).required()
+    // });
+
+    // const result = schema.validate(req.body);
+
+    // const result = validateCourse(req.body);
+
+    const { error } = validateCourse(req.body); // equivalent to result.error
+    if (error) {
+        res.status(400).send(error.details[0].message);
+        return;
+    }
+
+    // update course
+    // return the updated course
+    course.name = req.body.name;
+    res.send(course);
+});
+
+function validateCourse(course) {
+    const schema = Joi.object({
+        name: Joi.string().min(3).required()
+    });
+
+    return schema.validate(course);
+};
 
 // endpoint to get single course
 app.get('/api/courses/:id', (req, res) => { // id is parameter
