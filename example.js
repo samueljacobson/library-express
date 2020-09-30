@@ -111,7 +111,7 @@ function validateCourse(course) {
 app.get('/api/courses/:id', (req, res) => { // id is parameter
     // res.send(req.params.id);
     const course = courses.find(c => c.id === parseInt(req.params.id)); //req.params.id returns string, need to parse to bool
-    if (!course) return res.status(404).send('The course with the given ID was not found.') // 404 - object not found
+    if (!course) return res.status(404).send('The course with the given ID was not found.'); // 404 - object not found
     res.send(course);
 });
 
