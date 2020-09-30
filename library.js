@@ -54,7 +54,7 @@ app.delete('/api/books/:id', (req, res) => {
 
 function validateBook(book) {
     const schema = Joi.object({
-        name: Joi.string().min(3).required()
+        name: Joi.string().required()
     });
 
     return schema.validate(book);
@@ -64,10 +64,6 @@ app.get('/api/books/:id', (req, res) => {
     const book = books.find(c => c.id === parseInt(req.params.id));
     if (!book) return res.status(404).send('The book with the given ID was not found.');
     res.send(book);
-});
-
-app.get('/api/books/:year/:month', (req, res) => { 
-    res.send(req.query);
 });
 
 const port = process.env.PORT || 4000
